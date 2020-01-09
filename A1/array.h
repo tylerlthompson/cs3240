@@ -17,5 +17,6 @@ extern int get_rand_int(int min, int max);
 extern double get_rand_double(int min, int max);
 extern void write_array(double * array, int size);
 extern void print_array(double * array, int size);
+extern long get_time_nano(void);
 
 #endif

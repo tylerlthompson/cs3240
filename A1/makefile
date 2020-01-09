@@ -18,4 +18,4 @@ clean:
 	rm -f *.o a1 *.csv
 
 run:
-	./source
+	./a1

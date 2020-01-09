@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <unistd.h>
+#include <time.h>
 #include "array.h"
 
 #define ARRAY_BREAK_SIZE 1000 /* max size of array in each thread using insert sort */
@@ -19,6 +20,9 @@ struct arg_struct {
     int size;
 };
 
+/**
+ * create an array of random doubles
+ */
 double * createArray(int * size) {
     int i;
     *size = get_rand_int(10000, 12000);
@@ -27,40 +31,49 @@ double * createArray(int * size) {
     return array;
 }
 
+/**
+ * sort an array of doubles using threaded insert-merge sort
+ */
 int array(double * in_array, int size) {
     pthread_t thread;
+    time_t start_time, end_time;
     struct arg_struct thread_args = {0, in_array, size};
-    
+    printf("Input Array Size: %d\n", size);
+    start_time = get_time_nano();
+
     pthread_create(&(thread), NULL, &insert_merge_sort, (void *) &(thread_args));
-
     while (!thread_args.thread_complete) usleep(1);
-
     pthread_join(thread, NULL);
+
+    end_time = get_time_nano();
+    printf("Sort Runtime: %ldms\n", (end_time-start_time)/1000000);
+
     write_array(in_array, size);
 
     printf("Done.\n");
     return 0;
 }
 
+/**
+ * a threaded function that breaks up a double array into chunks and insert-merge sorts them
+ */
 void * insert_merge_sort(void * args_t) {
     int i;
     struct arg_struct * args = args_t;
-    printf("Size: %d\n", args->size);
-    // print_array(args->in_array, args->size);
+
     if (args->size <= ARRAY_BREAK_SIZE) {
         // do insert sort
-        for (i=0; i < args->size; i++) {
-            insert_sorted(args->in_array, get_rand_double(10, 10000), i);
-        }
-        printf("Thread finished.\n");
+        for (i=0; i < args->size; i++) insert_sorted(args->in_array, args->in_array[i], i);
     }
     else {
         pthread_t thread_1, thread_2;
         int thread_size_1 = args->size / 2;
         int thread_size_2 = (args->size / 2) + (args->size % 2);
-        printf("thread_size_1: %d thread_size_2: %d\n", thread_size_1, thread_size_2);
+
         double * array_1 = malloc(sizeof(double)*thread_size_1);
         double * array_2 = malloc(sizeof(double)*thread_size_2);
+        for (i=0; i<thread_size_1; i++) array_1[i] = args->in_array[i];
+        for (i=0; i<thread_size_2; i++) array_2[i] = args->in_array[i+thread_size_1];
         struct arg_struct thread_args_1 = {0, array_1, thread_size_1};
         struct arg_struct thread_args_2 = {0, array_2, thread_size_2};
 
@@ -136,6 +149,7 @@ void merge(double * src_1, int src_size_1, double * src_2, int src_size_2, doubl
  * generate a random integer
  */
 int get_rand_int(int min, int max) {
+    srand(get_time_nano()); /* seed rand() with current unix time */
     return (rand() % (max - min)) + min;
 }
 
@@ -167,5 +181,14 @@ void write_array(double * array, int size) {
  */
 void print_array(double * array, int size) {
     int i;
-    for (i=0; i<size; i++) printf(">%f<", array[i]);
+    for (i=0; i<size; i++) printf(">%f<\n", array[i]);
+}
+
+/**
+ * get the number of nano seconds since epoch
+ */
+long get_time_nano(void) {
+    struct timespec spec;
+    clock_gettime(CLOCK_REALTIME, &spec);
+    return spec.tv_nsec;
 }
