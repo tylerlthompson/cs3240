@@ -19,23 +19,6 @@ struct arg_struct {
     int size;
 };
 
-void write_array(double * array, int size) {
-    FILE *array_file = fopen("array.csv", "wb");
-    char * write_buf[size];
-    int i;
-    for (i=0; i<size; i++) {
-        sprintf(write_buf[i], "%f,", array[i]);
-    }
-    fwrite(write_buf, sizeof(char), size, array_file);
-   
-    fclose(array_file);
-}
-
-void print_array(double * array, int size) {
-    int i;
-    for (i=0; i<size; i++) printf(">%f<\n", array[i]);
-}
-
 double * createArray(int * size) {
     pthread_t thread;
     
@@ -64,7 +47,7 @@ void * insert_merge_sort(void * args_t) {
     if (args->size <= ARRAY_BREAK_SIZE) {
         // do insert sort
         for (i=0; i < args->size; i++) {
-            insert_sorted(args->in_array, (double) get_rand_int(100, 10000), i);
+            insert_sorted(args->in_array, get_rand_double(100, 10000), i);
         }
         printf("Thread finished.\n");
     }
@@ -99,6 +82,9 @@ void * insert_merge_sort(void * args_t) {
     return 0;
 }
 
+/**
+ * insert a double into a sorted array of doubles
+ */
 void insert_sorted(double * array, double value, int size) {
     int i;
     for (i=size-1; i>=0 && array[i] > value; i--) {
@@ -107,6 +93,9 @@ void insert_sorted(double * array, double value, int size) {
     array[i+1] = value;
 }
 
+/**
+ * merge sort two arrays of doubles
+ */
 void merge(double * src_1, int src_size_1, double * src_2, int src_size_2, double * dest) {
     int i, j, k;
     j = k = 0;
@@ -140,6 +129,40 @@ void merge(double * src_1, int src_size_1, double * src_2, int src_size_2, doubl
     }
 }
 
+/**
+ * generate a random integer
+ */
 int get_rand_int(int min, int max) {
     return (rand() % (max - min)) + min;
+}
+
+/**
+ * generate a random double
+ */
+double get_rand_double(int min, int max) {
+    const int decimal_place = 100000;
+    return ((double)(get_rand_int(min*decimal_place, max*decimal_place)) / decimal_place);
+}
+
+/**
+ * write an array of doubles to array.csv
+ */
+void write_array(double * array, int size) {
+    FILE * array_file = fopen("array.csv", "w");
+    char write_buf[size][12];
+    int i;
+    for (i=0; i<size; i++) {
+        sprintf(write_buf[i], "%f,", array[i]);
+    }
+    fwrite(write_buf, 12, size, array_file);
+   
+    fclose(array_file);
+}
+
+/**
+ * Print an array of doubles
+ */
+void print_array(double * array, int size) {
+    int i;
+    for (i=0; i<size; i++) printf(">%f<\n", array[i]);
 }
