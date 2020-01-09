@@ -3,7 +3,6 @@
 * WMU CS3240 - A1
 * Jan 7, 2020
 */
-#define _CRT_SECURE_NO_WARNINGS
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,6 +11,6 @@
 int main(int argc, char * argv[]) {
     int size;
     double * doubles_array = createArray(&size);
-    array(doubles_array, size);
+    sort_array(doubles_array, size);
 
 }
