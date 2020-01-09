@@ -1,21 +1,21 @@
-CC=gcc
-CFLAGS=-g -Wall -Werror -pedantic
-#CFLAGS=-O
+CC = gcc
+CFLAGS = -g -Wall -Werror -pedantic
+CFLAGS += -pthread
+# CFLAGS = -std=c11
 
-a1: a1.o array.o linked.o
+LDLIBS += -lpthread
+LDLIBS += -lrt
 
-a1.o: array.h linked.h
+a1: a1.o array.o error.o
 
-utils.o: utils.h
+a1.o: a1.c array.h apue.h
 
-array: array.o utils.o
+array.o: array.c apue.h
 
-array.o: array.h utils.h
-
-linked.o: linked.h
+error.o: error.c apue.h
 
 clean:
-	rm -f *.o core a1
+	rm -f *.o a1 *.csv
 
 run:
-	a1
+	./source

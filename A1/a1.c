@@ -8,9 +8,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "array.h"
-#include "linked.h"
 
 int main(int argc, char * argv[]) {
-    int size = 10;
-    createArray(&size);
+    int size;
+    double * doubles_array = createArray(&size);
+    print_array(doubles_array, size);
+    array(doubles_array, size);
 }
