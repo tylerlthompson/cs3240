@@ -11,6 +11,8 @@
 
 int main(int argc, char * argv[]) {
     int size;
-    createArray(&size);
-    // print_array(doubles_array, size);
+    double * doubles_array = createArray(&size);
+    print_array(doubles_array, size);
+    array(doubles_array, size);
+    print_array(doubles_array, size);
 }

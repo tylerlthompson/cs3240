@@ -20,23 +20,26 @@ struct arg_struct {
 };
 
 double * createArray(int * size) {
-    pthread_t thread;
-    
+    int i;
     *size = get_rand_int(10000, 12000);
-    double *ret_array = malloc(sizeof(double) * (*size));
-    struct arg_struct thread_args = {0, ret_array, *size};
+    double * array = malloc(sizeof(double) * (*size));
+    for (i=0; i<*size; i++) array[i] = get_rand_double(100, 10000);
+    return array;
+}
+
+int array(double * in_array, int size) {
+    pthread_t thread;
+    struct arg_struct thread_args = {0, in_array, size};
     
     pthread_create(&(thread), NULL, &insert_merge_sort, (void *) &(thread_args));
 
     while (!thread_args.thread_complete) usleep(1);
 
     pthread_join(thread, NULL);
-
-    write_array(ret_array, *size);
+    write_array(in_array, size);
 
     printf("Done.\n");
-
-    return ret_array;
+    return 0;
 }
 
 void * insert_merge_sort(void * args_t) {
@@ -47,7 +50,7 @@ void * insert_merge_sort(void * args_t) {
     if (args->size <= ARRAY_BREAK_SIZE) {
         // do insert sort
         for (i=0; i < args->size; i++) {
-            insert_sorted(args->in_array, get_rand_double(100, 10000), i);
+            insert_sorted(args->in_array, get_rand_double(10, 10000), i);
         }
         printf("Thread finished.\n");
     }
@@ -160,9 +163,9 @@ void write_array(double * array, int size) {
 }
 
 /**
- * Print an array of doubles
+ * print an array of doubles
  */
 void print_array(double * array, int size) {
     int i;
-    for (i=0; i<size; i++) printf(">%f<\n", array[i]);
+    for (i=0; i<size; i++) printf(">%f<", array[i]);
 }
