@@ -28,44 +28,6 @@ double get_rand_double(int min, int max) {
 }
 
 /**
- * write an array of doubles to array.csv
- */
-int write_array(double * array, int size, char * file_name) {
-    printf("writing file %s\n", file_name);
-    int i, ret = 0;
-    char write_buf[size][12];
-    FILE * array_file = fopen(file_name, "w");
-    if (!array_file) {
-        err_msg("failed to open file %s\n", file_name); 
-        ret = 1;
-    }
-    else {
-        for (i=0; i<size; i++) { // print doubles to buffer
-            if (i % 10 == 0) {
-                sprintf(write_buf[i], "%f,\n", array[i]); // newline every 10 elements
-            }
-            else {
-                sprintf(write_buf[i], "%f,", array[i]); 
-            }
-        }
-        if (!fwrite(write_buf, 12, size, array_file)) {
-            err_msg("failed to write to file %s\n", file_name);
-            ret = 1;
-        }
-        fclose(array_file);
-    }
-    return ret;
-}
-
-/**
- * print an array of doubles
- */
-void print_array(double * array, int size) {
-    int i;
-    for (i=0; i<size; i++) printf(">%f<\n", array[i]);
-}
-
-/**
  * get the number of nano seconds since epoch
  */
 long get_time_nano(void) {

@@ -11,15 +11,9 @@
 #include <time.h>
 #include "array.h"
 #include "utils.h"
+#include "apue.h"
 
 #define ARRAY_BREAK_SIZE 1000 /* max size of array in each thread using insert sort */
-
-/* arguments for a thread */
-struct arg_struct {
-    int thread_complete;
-    double * in_array;
-    int size;
-};
 
 /**
  * create an array of random doubles
@@ -89,8 +83,7 @@ void * insert_merge_sort(void * args_t) {
         pthread_create(&(thread_2), NULL, &insert_merge_sort, (void *) &(thread_args_2));
 
         /* wait for threads to complete */
-        while (!thread_args_1.thread_complete) usleep(1);
-        while (!thread_args_2.thread_complete) usleep(1);
+        while (!thread_args_1.thread_complete && !thread_args_2.thread_complete) usleep(1);
 
         /* join threads */
         pthread_join(thread_1, NULL);
@@ -154,3 +147,40 @@ void merge(double * src_1, int src_size_1, double * src_2, int src_size_2, doubl
     }
 }
 
+/**
+ * write an array of doubles to array.csv
+ */
+int write_array(double * array, int size, char * file_name) {
+    printf("writing file %s\n", file_name);
+    int i, ret = 0;
+    char write_buf[size][12];
+    FILE * array_file = fopen(file_name, "w");
+    if (!array_file) {
+        err_msg("failed to open file %s\n", file_name); 
+        ret = 1;
+    }
+    else {
+        for (i=0; i<size; i++) { // print doubles to buffer
+            if (i % 10 == 0) {
+                sprintf(write_buf[i], "%f,\n", array[i]); // newline every 10 elements
+            }
+            else {
+                sprintf(write_buf[i], "%f,", array[i]); 
+            }
+        }
+        if (!fwrite(write_buf, 12, size, array_file)) {
+            err_msg("failed to write to file %s\n", file_name);
+            ret = 1;
+        }
+        fclose(array_file);
+    }
+    return ret;
+}
+
+/**
+ * print an array of doubles
+ */
+void print_array(double * array, int size) {
+    int i;
+    for (i=0; i<size; i++) printf(">%f<\n", array[i]);
+}
