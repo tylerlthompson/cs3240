@@ -138,11 +138,10 @@ void * insert_merge_sort_list(void * args_t) {
         // merge both halves back together
         merge_list(thread_args_1.in_list, thread_args_2.in_list, &(args->in_list));
 
-        /* free memory of temporary arrays */
+        /* free memory of temporary lists */
         free(head_1);
         free(head_2);
         
-
     }
     args->thread_complete = 1;
     pthread_exit(0);

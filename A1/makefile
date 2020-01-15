@@ -1,7 +1,8 @@
 CC = gcc
 CFLAGS = -g -Wall -Werror -pedantic
+# CFLAGS = -O
 CFLAGS += -pthread
-# CFLAGS = -std=c11
+# CFLAGS += -std=c11
 
 LDLIBS += -lpthread
 LDLIBS += -lrt
