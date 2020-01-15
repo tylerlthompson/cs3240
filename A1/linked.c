@@ -15,6 +15,9 @@
 
 #define ARRAY_BREAK_SIZE 1000 /* max size of array in each thread using insert sort */
 
+/**
+ * create and initialize a linked list filled with random doubles
+ */
 linked_list * createLinkedList_Filled(int * size) {
     int i;
     *size = get_rand_int(10000, 12000);
@@ -28,6 +31,9 @@ linked_list * createLinkedList_Filled(int * size) {
     return head;
 }
 
+/**
+ * create and initialize a linked list
+ */
 linked_list * create_linked_list(int size) {
     int i;
     linked_list *head, *cur_node;
@@ -45,6 +51,9 @@ linked_list * create_linked_list(int size) {
     return head;
 }
 
+/**
+ * sort a linked list using merge-insert sort
+ */
 int sort_linked(linked_list * in_list, int size) {
     int ret = 0;
     pthread_t thread;
@@ -67,6 +76,9 @@ int sort_linked(linked_list * in_list, int size) {
     return ret;
 }
 
+/**
+ * run a threaded merge-insert sort on a linked list
+ */
 void * insert_merge_sort_list(void * args_t) {
     struct arg_struct_list * args = args_t;
 
@@ -132,6 +144,9 @@ void * insert_merge_sort_list(void * args_t) {
     pthread_exit(0);
 }
 
+/**
+ * insert a node into a sorted linked list
+ */
 void insert_sorted_list(linked_list ** head, linked_list * node) {
     linked_list * cur_node;
 
@@ -146,6 +161,9 @@ void insert_sorted_list(linked_list ** head, linked_list * node) {
     }
 }
 
+/**
+ * merge linked list src_1 and src_2 and put the resulting head into *dest
+ */
 void merge_list(linked_list *src_1, linked_list *src_2, linked_list **dest) {
     linked_list temp;
     linked_list *cur_node = &temp;
@@ -170,11 +188,17 @@ void merge_list(linked_list *src_1, linked_list *src_2, linked_list **dest) {
     (*dest) = temp.next;
 }
 
+/**
+ * print a linked list
+ */
 void print_linked_list(linked_list * head) {
     linked_list * cur_node;
     for (cur_node=head; cur_node != NULL; cur_node=cur_node->next) printf(">%f<\n", cur_node->data);
 }
 
+/**
+ * swap node a into node b location and move node b down
+ */
 void swap_nodes(linked_list **a, linked_list **b) {
     linked_list* temp_node = *b;   
     *b = temp_node->next;  
@@ -182,6 +206,9 @@ void swap_nodes(linked_list **a, linked_list **b) {
     *a = temp_node;  
 }
 
+/**
+ * write a linked list to a file using the write_array() function
+ */
 int write_list(linked_list * in_list, int size, char * file_name) {
     int i = 0, ret_val = 0;
     double * write_buf = malloc(sizeof(double) * (size));;
