@@ -5,6 +5,7 @@ CFLAGS += -pthread
 
 LDLIBS += -lpthread
 LDLIBS += -lrt
+# LDLIBS += -lm  # used with math.h
 
 a1: a1.o array.o error.o utils.o linked.o
 

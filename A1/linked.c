@@ -57,18 +57,18 @@ linked_list * create_linked_list(int size) {
 int sort_linked(linked_list * in_list, int size) {
     int ret = 0;
     pthread_t thread;
-    time_t start_time, end_time;
+    clock_t start_time, end_time;
     struct arg_struct_list thread_args = {0, in_list, size};
     printf("Input Linked List Size: %d\n", size);
-    start_time = get_time_nano();
+    start_time = clock();
 
     /* start main thread and wait for it to finish */
     pthread_create(&(thread), NULL, &insert_merge_sort_list, (void *) &(thread_args));
     while (!thread_args.thread_complete) usleep(1);
     pthread_join(thread, NULL);
 
-    end_time = get_time_nano();
-    printf("Sort Runtime: %ldms\n", (end_time-start_time)/1000000);
+    end_time = clock();
+    print_runtime(start_time, end_time);
 
     if (!write_list(thread_args.in_list, thread_args.size, "linked.csv")) ret = -1;
     free(in_list);
@@ -197,7 +197,7 @@ void print_linked_list(linked_list * head) {
 }
 
 /**
- * swap node a into node b location and move node b down
+ * swap node a into node b location and set node b as next
  */
 void swap_nodes(linked_list **a, linked_list **b) {
     linked_list* temp_node = *b;   
@@ -211,12 +211,14 @@ void swap_nodes(linked_list **a, linked_list **b) {
  */
 int write_list(linked_list * in_list, int size, char * file_name) {
     int i = 0, ret_val = 0;
-    double * write_buf = malloc(sizeof(double) * (size));;
     linked_list *cur_node;
+    double * write_buf = malloc(sizeof(double) * (size));;
+    
     for (cur_node=in_list; cur_node!=NULL; cur_node=cur_node->next) {
         write_buf[i] = cur_node->data;
         i++;
     }
+
     ret_val = write_array(write_buf, size, file_name);
     free(write_buf);
     return ret_val;

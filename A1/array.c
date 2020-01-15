@@ -33,19 +33,18 @@ double * createArray(int * size) {
 int sort_array(double * in_array, int size) {
     int ret = 0;
     pthread_t thread;
-    time_t start_time, end_time;
+    clock_t start_time, end_time;
     struct arg_struct thread_args = {0, in_array, size};
     printf("Input Array Size: %d\n", size);
-    start_time = get_time_nano();
+    start_time = clock();
 
     /* start main thread and wait for it to finish */
     pthread_create(&(thread), NULL, &insert_merge_sort, (void *) &(thread_args));
     while (!thread_args.thread_complete) usleep(1);
     pthread_join(thread, NULL);
 
-    end_time = get_time_nano();
-    printf("Sort Runtime: %ldms\n", (end_time-start_time)/1000000);
-
+    end_time = clock();
+    print_runtime(start_time, end_time);
     if (!write_array(in_array, size, "array.csv")) ret = -1;
     free(in_array);
     printf("Done.\n");

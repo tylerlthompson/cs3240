@@ -9,6 +9,7 @@
 
 extern int get_rand_int(int min, int max);
 extern double get_rand_double(int min, int max);
-extern long get_time_nano(void);
+extern unsigned long get_time_nano(void);
+extern void print_runtime(clock_t start_time, clock_t end_time);
 
 #endif
