@@ -60,7 +60,7 @@ int sort_linked(linked_list * in_list, int size) {
 
     end_time = get_time_nano();
     printf("Sort Runtime: %ldms\n", (end_time-start_time)/1000000);
-    //print_linked_list(thread_args.in_list);
+
     if (!write_list(thread_args.in_list, thread_args.size, "linked.csv")) ret = -1;
     free(in_list);
     printf("Done.\n");
@@ -73,8 +73,6 @@ void * insert_merge_sort_list(void * args_t) {
     if (args->size <= ARRAY_BREAK_SIZE) {
         // do insert sort
         linked_list *cur_node, *next_node;
-        // print_linked_list(args->in_list);
-        //printf("running insert sort, size %d, head %p\n", args->size, (void *) args->in_list);
         linked_list *sorted_list = create_linked_list(1);
 
         sorted_list->data = args->in_list->data;
@@ -86,9 +84,6 @@ void * insert_merge_sort_list(void * args_t) {
         }
         
         args->in_list = sorted_list;
-        //printf("final head %p\n", (void *) args->in_list);
-        //free(sorted_list);
-        //print_linked_list(args->in_list);
     }
     else {
         pthread_t thread_1, thread_2;
@@ -96,8 +91,7 @@ void * insert_merge_sort_list(void * args_t) {
         /* calculate size of each half of the list */
         int thread_size_1 = args->size / 2;
         int thread_size_2 = (args->size / 2) + (args->size % 2);
-        //printf("thread_size_1 %d thread_size_2 %d\n", thread_size_1, thread_size_2);
-
+       
         /* create lists for both halves and fill them */
         linked_list * head_1 = create_linked_list(thread_size_1);
         linked_list * head_2 = create_linked_list(thread_size_2);
@@ -140,7 +134,6 @@ void * insert_merge_sort_list(void * args_t) {
 
 void insert_sorted_list(linked_list ** head, linked_list * node) {
     linked_list * cur_node;
-    //printf("value to insert %f\n", node->data);
 
     if (*head == NULL || (*head)->data >= node->data) {
         node->next = *head;
