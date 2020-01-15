@@ -113,11 +113,11 @@ void * insert_merge_sort_list(void * args_t) {
         linked_list * head_2 = create_linked_list(thread_size_2);
     
         linked_list *cur_node, *main_node = args->in_list;
-        for (cur_node=head_1; cur_node->next!=NULL; cur_node=cur_node->next) {
+        for (cur_node=head_1; cur_node!=NULL; cur_node=cur_node->next) {
             cur_node->data = main_node->data;
             main_node = main_node->next;
         }
-        for (cur_node=head_2; cur_node->next!=NULL; cur_node=cur_node->next) {
+        for (cur_node=head_2; cur_node!=NULL; cur_node=cur_node->next) {
             cur_node->data = main_node->data;
             main_node = main_node->next;
         }
@@ -171,6 +171,7 @@ void merge_list(linked_list *src_1, linked_list *src_2, linked_list **dest) {
     linked_list temp;
     linked_list *cur_node = &temp;
     temp.next = NULL;
+   
     while (src_1 != NULL && src_2 != NULL) {
         if (src_1->data <= src_2->data) {
             swap_nodes(&(cur_node->next), &src_1);
@@ -181,7 +182,7 @@ void merge_list(linked_list *src_1, linked_list *src_2, linked_list **dest) {
         cur_node = cur_node->next;
     }
     if (src_1 == NULL) {
-        cur_node->next = src_2; 
+    cur_node->next = src_2;
     }
     else if (src_2 == NULL) {
         cur_node->next = src_1;
