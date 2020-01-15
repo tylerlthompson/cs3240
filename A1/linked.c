@@ -38,15 +38,18 @@ linked_list * create_linked_list(int size) {
     int i;
     linked_list *head, *cur_node;
     head = malloc(sizeof(linked_list));
+
     head->next = NULL;
     head->data = 0.0;
     cur_node = head;
+
     for (i=0; i<size-1; i++) {
         linked_list *new_node = malloc(sizeof(linked_list));
         cur_node->next = new_node;
         cur_node->data = 0.0;
         cur_node = cur_node->next;
     }
+
     cur_node->next = NULL;
     return head;
 }
@@ -59,6 +62,7 @@ int sort_linked(linked_list * in_list, int size) {
     pthread_t thread;
     clock_t start_time, end_time;
     struct arg_struct_list thread_args = {0, in_list, size};
+
     printf("Input Linked List Size: %d\n", size);
     start_time = clock();
 
@@ -149,7 +153,6 @@ void * insert_merge_sort_list(void * args_t) {
  */
 void insert_sorted_list(linked_list ** head, linked_list * node) {
     linked_list * cur_node;
-
     if (*head == NULL || (*head)->data >= node->data) {
         node->next = *head;
         *head = node;
@@ -168,15 +171,7 @@ void merge_list(linked_list *src_1, linked_list *src_2, linked_list **dest) {
     linked_list temp;
     linked_list *cur_node = &temp;
     temp.next = NULL;
-    while (1) {
-        if (src_1 == NULL) {
-            cur_node->next = src_2;
-            break;
-        }
-        else if (src_2 == NULL) {
-            cur_node->next = src_1;
-            break;
-        }
+    while (src_1 != NULL && src_2 != NULL) {
         if (src_1->data <= src_2->data) {
             swap_nodes(&(cur_node->next), &src_1);
         }
@@ -184,6 +179,12 @@ void merge_list(linked_list *src_1, linked_list *src_2, linked_list **dest) {
             swap_nodes(&(cur_node->next), &src_2);
         }
         cur_node = cur_node->next;
+    }
+    if (src_1 == NULL) {
+        cur_node->next = src_2; 
+    }
+    else if (src_2 == NULL) {
+        cur_node->next = src_1;
     }
     (*dest) = temp.next;
 }

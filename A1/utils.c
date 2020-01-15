@@ -23,7 +23,7 @@ int get_rand_int(int min, int max) {
  * generate a random double
  */
 double get_rand_double(int min, int max) {
-    const int decimal_place = 100000;
+    const int decimal_place = 1.0e6;
     return ((double)(get_rand_int(min*decimal_place, max*decimal_place)) / decimal_place);
 }
 

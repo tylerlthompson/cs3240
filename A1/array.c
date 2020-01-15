@@ -152,24 +152,25 @@ void merge(double * src_1, int src_size_1, double * src_2, int src_size_2, doubl
 int write_array(double * array, int size, char * file_name) {
     printf("writing file %s\n", file_name);
     int i, ret = 0;
-    char write_buf[size][12];
     FILE * array_file = fopen(file_name, "w");
     if (!array_file) {
         err_msg("failed to open file %s\n", file_name); 
-        ret = 1;
+        ret = -1;
     }
     else {
-        for (i=0; i<size; i++) { // print doubles to buffer
-            if (i % 10 == 0) {
-                sprintf(write_buf[i], "%f,\n", array[i]); // newline every 10 elements
+        for (i=0; i<size; i++) {
+            if (!fprintf(array_file, "%f,", array[i])) {
+                err_msg("failed to write to file %s\n", file_name);
+                ret = -1;
             }
             else {
-                sprintf(write_buf[i], "%f,", array[i]); 
+                if ((i+1) % 10 == 0) { // newline every 10 elements
+                    if (!fprintf(array_file,"\n")) { 
+                        err_msg("failed to write to file %s\n", file_name);
+                        ret = -1;
+                    }
+                }
             }
-        }
-        if (!fwrite(write_buf, 12, size, array_file)) {
-            err_msg("failed to write to file %s\n", file_name);
-            ret = 1;
         }
         fclose(array_file);
     }
