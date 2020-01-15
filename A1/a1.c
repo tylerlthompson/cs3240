@@ -11,10 +11,9 @@
 
 int main(int argc, char * argv[]) {
     int size;
-    // double * doubles_array = createArray(&size);
-    // sort_array(doubles_array, size);
-    linked_list * doubles_list = creatLinkedList(&size);
+    double * doubles_array = createArray(&size);
+    sort_array(doubles_array, size);
+    linked_list * doubles_list = createLinkedList_Filled(&size);
     sort_linked(doubles_list, size);
-    // print_linked_list(doubles_list, size);
-    // free(doubles_list);
+    exit(0);
 }

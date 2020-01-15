@@ -12,14 +12,14 @@ a1.o: a1.c array.h apue.h linked.h
 
 array.o: array.c apue.h utils.h
 
-linked.o: linked.c apue.h utils.h
+linked.o: linked.c apue.h utils.h array.h
 
 error.o: error.c apue.h
 
 utils.o: utils.c apue.h
 
 clean:
-	rm -f *.o a1 *.csv
+	rm -f *.o a1 *.csv core
 
 run:
 	./a1
