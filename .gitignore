@@ -1,6 +1,8 @@
 
 *.o
-*.csv
+array.csv
+linked.csv
 core
 source
 a1
+parser
