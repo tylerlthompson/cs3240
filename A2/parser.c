@@ -146,9 +146,10 @@ void free_cards(CARD *cards, int size) {
 
 FILE * open_file(const char *file_name, int *line_count) {
     int lines = 0;
-    FILE * data_file = fopen(DATA_FILE_NAME, "r");
+    FILE *data_file = fopen(DATA_FILE_NAME, "r");
     if (!data_file) err_quit("Failed to open data file %s\n", DATA_FILE_NAME);
     while(!feof(data_file)) if (fgetc(data_file) == '\n') lines++;
     rewind(data_file);
+    *line_count = lines;
     return data_file;
 }
