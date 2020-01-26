@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
     CARD *cards = malloc(sizeof(CARD)*line_count);
     CARD **sorted_cards = malloc(sizeof(CARD*)*sorted_size);
 
-    parse_file(data_file, cards, &sorted_size, sorted_cards);
+    parse_file(data_file, cards, sorted_cards, &sorted_size);
 
     fclose(data_file);
     write_cards(sorted_cards, sorted_size, OUTPUT_FILE_NAME);
@@ -41,6 +41,9 @@ int main(int argc, char *argv[]) {
     printf("Done.\n");
 }
 
+/**
+ * free memory for an array of cards
+ */
 void free_cards(CARD *cards, int size) {
     int i;
     for (i=0; i<size; i++) {
@@ -53,6 +56,9 @@ void free_cards(CARD *cards, int size) {
     free(cards);
 }
 
+/**
+ * open a file and calculate how many new lines are in it
+ */
 FILE * open_file(const char *file_name, int *line_count) {
     int lines = 0;
     FILE *data_file = fopen(file_name, "r");
@@ -64,6 +70,9 @@ FILE * open_file(const char *file_name, int *line_count) {
     return data_file;
 }
 
+/**
+ * write and array of cards to a file
+ */
 void write_cards(CARD **cards, int size, const char *file_name) {
     const char separator[43] = "------------------------------------------";
     int i;

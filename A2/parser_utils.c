@@ -13,8 +13,10 @@
 /* parser functions indexed in the same order as the columns in the source file */
 static void (*parsers[8]) (parser_args) = {parse_int, parse_string, parse_string, parse_int, parse_string, parse_string, parse_string, parse_rarity};
 
-
-void parse_file(FILE *data_file, CARD *cards, int *cards_size, CARD **sorted_cards) {
+/**
+ * parse a file for MTG card info and store it in a array of structs
+ */
+void parse_file(FILE *data_file, CARD *cards, CARD **sorted_cards, int *sorted_size) {
     int i = 0, quote_count = 0, column_num = 0, card_num = 0;
     char buf[1024];  // file reading buffer
     char next_char;
@@ -37,7 +39,7 @@ void parse_file(FILE *data_file, CARD *cards, int *cards_size, CARD **sorted_car
                 card_num++;
             }
             else { // duplicate found
-                (*cards_size)--;
+                (*sorted_size)--;
             }
             i = 0;
             column_num = 0;
@@ -63,6 +65,9 @@ void parse_file(FILE *data_file, CARD *cards, int *cards_size, CARD **sorted_car
     }
 }
 
+/**
+ * parse a data field and store it in its coresponding variable in a card struct
+ */
 void parse_data(char *buf, int buf_length, int column_num, CARD *card) {
     void *dests[8] = {(void *) &(card->id),
                       (void *) &(card->name),
@@ -76,15 +81,24 @@ void parse_data(char *buf, int buf_length, int column_num, CARD *card) {
     parsers[column_num](args);
 }
 
+/**
+ * parse a string and store it in a destination
+ */
 void parse_string(parser_args args) {
     *(args.dest) = malloc(sizeof(char)*(args.buf_length+1));
     strcpy(*(args.dest), args.buf);
 }
 
+/**
+ * parse an integer and store it in a destination
+ */
 void parse_int(parser_args args) {
     *(unsigned int *)args.dest = atoi(args.buf);
 }
 
+/**
+ * parse a rarity enum and store it in a destination
+ */
 void parse_rarity(parser_args args) {
     if (strcmp(args.buf, "uncommon") == 0) *(char *)args.dest = Uncommon;
     else if (strcmp(args.buf, "rare") == 0) *(char *)args.dest = Rare;
@@ -92,6 +106,9 @@ void parse_rarity(parser_args args) {
     else *(char *)args.dest = Common;
 }
 
+/**
+ * convert a rarity enum to a string
+ */
 char * rarity_to_string(enum Rarity rarity) {
     if (rarity == Uncommon) return "uncommon";
     else if (rarity == Rare) return "rare";
@@ -99,6 +116,9 @@ char * rarity_to_string(enum Rarity rarity) {
     else return "common";
 }
 
+/**
+ * insert a card into a sorted array of card pointers
+ */
 void insert_sorted_card(CARD **cards, CARD *card, int size) {
     int i;
     for (i=size-1; i>=0 && strcmp(cards[i]->name, card->name) > 0; i--) {
@@ -107,6 +127,9 @@ void insert_sorted_card(CARD **cards, CARD *card, int size) {
     cards[i+1] = card;
 }
 
+/**
+ * search an array of card pointers for a specific card, based on name
+ */
 int binary_search_card(CARD **cards, CARD search_card, int cards_length) {
     int found = -1, top = 0, btm = cards_length, mid, str_cmp;
     while (found == -1 && top <= btm) {

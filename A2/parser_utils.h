@@ -17,7 +17,7 @@ typedef struct _args {
     void **dest;
 } parser_args;
 
-extern void parse_file(FILE *data_file, CARD *cards, int *cards_size, CARD **sorted_cards);
+extern void parse_file(FILE *data_file, CARD *cards, CARD **sorted_cards, int *cards_size);
 extern void parse_data(char *buf, int buf_length, int column_num, CARD *card);
 extern void parse_string(parser_args args);
 extern void parse_int(parser_args args);
