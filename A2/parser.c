@@ -1,6 +1,6 @@
 /**
 * Tyler Thompson
-* WMU CS3240 - A2
+* WMU CS3240 - A3
 * Jan 29, 2020
 * Dup Test: Wind-Scarred Crag 
 */
@@ -27,9 +27,9 @@ int main(int argc, char *argv[]) {
     line_count--;
     sorted_size = line_count;
 
-    CARD *cards = malloc(sizeof(CARD)*line_count);
     CARD **sorted_cards = malloc(sizeof(CARD*)*sorted_size);
-
+    CARD *cards = malloc(sizeof(CARD)*line_count);
+    
     parse_file(data_file, cards, sorted_cards, &sorted_size);
 
     fclose(data_file);
