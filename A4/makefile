@@ -10,8 +10,6 @@ error.o: error.c apue.h
 
 clean:
 	rm -f *.o core defrag music.mp3
-	rm -rf dirs
 
 run:
-	unzip dirs.zip
 	./defrag dirs

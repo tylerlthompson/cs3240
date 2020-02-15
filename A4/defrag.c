@@ -20,15 +20,24 @@ char * get_directory_name(int argc, char *argv[]) {
 }
 
 void process_dir(char *dir_name, char **bin_store) {
-
-    printf("dir_name %s\n", dir_name);
-    DIR *cur_dir = opendir(dir_name);
-    struct dirent *cur_entries;
-    while((cur_entries = readdir(cur_dir)) != NULL) {
-        printf("%s\n", (*cur_entries).d_name);
-        cur_entries++;
+    struct stat stat_struct;
+    stat(dir_name, &stat_struct);
+    if (S_ISDIR(stat_struct.st_mode)) {
+        char child_dir[256];
+        DIR *cur_dir = opendir(dir_name);
+        struct dirent *cur_entries;
+        while((cur_entries = readdir(cur_dir)) != NULL) {
+            if (strcmp((*cur_entries).d_name, ".") && strcmp((*cur_entries).d_name, "..")) {
+                sprintf(child_dir, "%s/%s", dir_name, (*cur_entries).d_name);
+                process_dir(child_dir, bin_store);
+            }
+            cur_entries++;
+        }
+        closedir(cur_dir);
     }
-    closedir(cur_dir);
+    else if (S_ISREG(stat_struct.st_mode)) {
+        printf("%s\n", dir_name);
+    }
 }
 
 int main(int argc, char *argv[]) {
