@@ -19,34 +19,64 @@ char * get_directory_name(int argc, char *argv[]) {
     return argv[1];
 }
 
-void process_dir(char *dir_name, char **bin_store) {
+void process_dir(char *dir_name, unsigned char *bin_store[66], int bin_sizes[66]) {
+    int str_len, file_index;
     struct stat stat_struct;
-    stat(dir_name, &stat_struct);
-    if (S_ISDIR(stat_struct.st_mode)) {
-        char child_dir[256];
-        DIR *cur_dir = opendir(dir_name);
-        struct dirent *cur_entries;
-        while((cur_entries = readdir(cur_dir)) != NULL) {
-            if (strcmp((*cur_entries).d_name, ".") && strcmp((*cur_entries).d_name, "..")) {
-                sprintf(child_dir, "%s/%s", dir_name, (*cur_entries).d_name);
-                process_dir(child_dir, bin_store);
+    struct dirent *cur_entries;
+    char child_dir[256], file_index_str[2];
+    FILE *bin_file = NULL;
+
+    lstat(dir_name, &stat_struct);
+    if (!S_ISLNK(stat_struct.st_mode)) { // don't follow symbolic links
+        if (S_ISDIR(stat_struct.st_mode)) {
+            
+            DIR *cur_dir = opendir(dir_name);
+            
+            while((cur_entries = readdir(cur_dir)) != NULL) {
+                if (strcmp((*cur_entries).d_name, ".") && strcmp((*cur_entries).d_name, "..")) {
+                    sprintf(child_dir, "%s/%s", dir_name, (*cur_entries).d_name);
+                    process_dir(child_dir, bin_store, bin_sizes);
+                }
+                cur_entries++;
             }
-            cur_entries++;
+            closedir(cur_dir);
         }
-        closedir(cur_dir);
-    }
-    else if (S_ISREG(stat_struct.st_mode)) {
-        printf("%s\n", dir_name);
+        else if (S_ISREG(stat_struct.st_mode)) {
+            
+            for (str_len=0; dir_name[str_len] != '\0'; str_len++);
+            sprintf(file_index_str, "%.2s", dir_name+(str_len-6));
+            file_index = atoi(file_index_str);
+            printf("File found %s File index %d\n", dir_name, file_index);
+            bin_file = fopen(dir_name, "rb");
+
+            // fseek(bin_file, 0, SEEK_END);
+            // file_len = ftell(bin_file);
+            // rewind(bin_file);
+            bin_store[file_index] = malloc(sizeof(unsigned char) * stat_struct.st_size);
+            bin_sizes[file_index] = stat_struct.st_size;
+
+            fread(bin_store[file_index], sizeof(unsigned char) * stat_struct.st_size, 1, bin_file);
+            fclose(bin_file);
+        }
     }
 }
 
 int main(int argc, char *argv[]) {
-    char *bin_array[65];
+    unsigned char *bin_array[66];
+    int bin_sizes[66];
 
     // get directory name from command line argument
     char *dir_name = get_directory_name(argc, argv);
 
-    process_dir(dir_name, &(bin_array[0]));
+    process_dir(dir_name, bin_array, bin_sizes);
     
+    FILE *out_file = fopen("music.mp3", "wb");
+
+    int i;
+    for (i=0; i<66; i++) {
+        fwrite(bin_array[i], sizeof(unsigned char) * bin_sizes[i], 1, out_file);
+    }
+    fclose(out_file);
+
     return 0;
 }
